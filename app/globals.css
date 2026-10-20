@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  SmartMeme AI — Design Tokens
+  Dark mode is the default surface; .light overrides below.
+  All colors are HSL channel triplets (no hsl() wrapper) so Tailwind
+  can compose them with opacity modifiers, e.g. bg-background/80.
+*/
+
+@layer base {
+  :root {
+    /* Surfaces — layered elevation instead of shadows */
+    --background: 240 6% 4%;      /* #0A0A0B */
+    --surface-1: 240 6% 8%;       /* #131316 */
+    --surface-2: 240 5% 12%;      /* #1C1C1F */
+
+    /* Text */
+    --foreground: 0 0% 98%;
+    --muted-foreground: 240 5% 65%;
+
+    /* Borders */
+    --border: 240 6% 16%;
+    --ring: 243 78% 66%;
+
+    /* Accent — restrained violet, used sparingly */
+    --accent: 243 78% 66%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Semantic — desaturated, informational rather than alarm-toned */
+    --safe: 152 40% 45%;
+    --safe-foreground: 0 0% 100%;
+    --blocked: 6 50% 58%;
+    --blocked-foreground: 0 0% 100%;
+
+    /* Shape & rhythm */
+    --radius: 12px;
+
+    /* Motion — Emil Kowalski-style expo-out for entrances */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .light {
+    --background: 0 0% 98%;       /* #FAFAFA */
+    --surface-1: 0 0% 100%;
+    --surface-2: 240 5% 95%;
+
+    --foreground: 240 10% 8%;
+    --muted-foreground: 240 4% 40%;
+
+    --border: 240 6% 88%;
+    --ring: 243 70% 55%;
+
+    --accent: 243 70% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --safe: 152 40% 32%;
+    --safe-foreground: 0 0% 100%;
+    --blocked: 6 55% 45%;
+    --blocked-foreground: 0 0% 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible keyboard focus everywhere — never removed, only restyled */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* Utility for the one place we use glass: nav + the analysis panel */
+  .glass {
+    background: hsl(var(--surface-1) / 0.6);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+}
+
+/* Global reduced-motion contract: every animation in the app must
+   respect this. Components should also gate JS-driven motion via
+   the useReducedMotion hook in lib/motion.ts — this covers CSS. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

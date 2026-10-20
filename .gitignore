@@ -1,0 +1,38 @@
+node_modules
+.next
+out
+.env*.local
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Python environment and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Frontend dependencies and builds
+node_modules/
+.next/
+dist/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Large trained model checkpoints
+backend/training/backup_tuned_20261016/
+backend/training/checkpoints_multimodal/
+backend/training/checkpoints_multimodal_exp2/
+backend/training/checkpoints_multimodal_exp3/
+backend/training/checkpoints_multimodal_smoke_test/
+
+# Generated preprocessing datasets
+backend/preprocessing/output/*.csv
+backend/preprocessing/output/backup_before_path_fix/
+
+# Generated model checkpoints
+backend/training/checkpoints/
+backend/training/checkpoints_smoke_test/

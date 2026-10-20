@@ -1,0 +1,16 @@
+{
+  "classes": [
+    "negative",
+    "neutral",
+    "positive",
+    "very_negative",
+    "very_positive"
+  ],
+  "label_to_index": {
+    "negative": 0,
+    "neutral": 1,
+    "positive": 2,
+    "very_negative": 3,
+    "very_positive": 4
+  }
+}

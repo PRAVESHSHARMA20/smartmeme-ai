@@ -1,0 +1,84 @@
+{
+  "split": "test",
+  "checkpoint_epoch": 2,
+  "checkpoint_val_f1_macro": 0.204285688441185,
+  "accuracy": 0.30523255813953487,
+  "precision_macro": 0.20643982200282013,
+  "recall_macro": 0.20948083313939314,
+  "f1_macro": 0.20320187724630134,
+  "f1_weighted": 0.3173374580081743,
+  "precision_weighted": 0.3398960544785121,
+  "recall_weighted": 0.30523255813953487,
+  "precision_per_class": {
+    "negative": 0.05555555555555555,
+    "neutral": 0.348993288590604,
+    "positive": 0.44692737430167595,
+    "very_negative": 0.0,
+    "very_positive": 0.18072289156626506
+  },
+  "recall_per_class": {
+    "negative": 0.08450704225352113,
+    "neutral": 0.31901840490797545,
+    "positive": 0.34782608695652173,
+    "very_negative": 0.0,
+    "very_positive": 0.29605263157894735
+  },
+  "f1_per_class": {
+    "negative": 0.0670391061452514,
+    "neutral": 0.3333333333333333,
+    "positive": 0.39119804400978,
+    "very_negative": 0.0,
+    "very_positive": 0.22443890274314215
+  },
+  "support_per_class": {
+    "negative": 71,
+    "neutral": 326,
+    "positive": 460,
+    "very_negative": 23,
+    "very_positive": 152
+  },
+  "confusion_matrix": [
+    [
+      6,
+      16,
+      25,
+      3,
+      21
+    ],
+    [
+      38,
+      104,
+      103,
+      4,
+      77
+    ],
+    [
+      47,
+      141,
+      160,
+      9,
+      103
+    ],
+    [
+      1,
+      5,
+      14,
+      0,
+      3
+    ],
+    [
+      16,
+      32,
+      56,
+      3,
+      45
+    ]
+  ],
+  "class_names": [
+    "negative",
+    "neutral",
+    "positive",
+    "very_negative",
+    "very_positive"
+  ]
+}

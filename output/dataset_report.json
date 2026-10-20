@@ -1,0 +1,474 @@
+{
+  "generated_at": "2026-08-06T09:34:04.930919+00:00",
+  "dataset_root": "C:\\Users\\prave\\OneDrive\\Desktop\\6992 Meme Images Dataset with Labels\\images",
+  "csv_path": "C:\\Users\\prave\\OneDrive\\Desktop\\6992 Meme Images Dataset with Labels\\labels.csv",
+  "total_images_scanned": 6991,
+  "total_matched_images": 6991,
+  "label_count": 5,
+  "label_counts": {
+    "positive": 3126,
+    "neutral": 2201,
+    "very_positive": 1033,
+    "negative": 480,
+    "very_negative": 151
+  },
+  "average_filesize_bytes": 105430.49,
+  "average_filesize_kb": 102.96,
+  "resolution_distribution": [
+    {
+      "width": 500.0,
+      "height": 566.0,
+      "count": 119
+    },
+    {
+      "width": 400.0,
+      "height": 400.0,
+      "count": 88
+    },
+    {
+      "width": 640.0,
+      "height": 640.0,
+      "count": 80
+    },
+    {
+      "width": 600.0,
+      "height": 600.0,
+      "count": 72
+    },
+    {
+      "width": 500.0,
+      "height": 522.0,
+      "count": 65
+    },
+    {
+      "width": 500.0,
+      "height": 610.0,
+      "count": 62
+    },
+    {
+      "width": 500.0,
+      "height": 500.0,
+      "count": 59
+    },
+    {
+      "width": 480.0,
+      "height": 360.0,
+      "count": 49
+    },
+    {
+      "width": 300.0,
+      "height": 300.0,
+      "count": 42
+    },
+    {
+      "width": 480.0,
+      "height": 480.0,
+      "count": 40
+    },
+    {
+      "width": 500.0,
+      "height": 654.0,
+      "count": 39
+    },
+    {
+      "width": 236.0,
+      "height": 236.0,
+      "count": 37
+    },
+    {
+      "width": 1280.0,
+      "height": 720.0,
+      "count": 31
+    },
+    {
+      "width": 200.0,
+      "height": 202.0,
+      "count": 23
+    },
+    {
+      "width": 1200.0,
+      "height": 630.0,
+      "count": 22
+    }
+  ],
+  "dimension_summary": {
+    "width": {
+      "count": 6990.0,
+      "mean": 587.05,
+      "std": 256.86,
+      "min": 100.0,
+      "25%": 480.0,
+      "50%": 500.0,
+      "75%": 640.0,
+      "max": 4961.0
+    },
+    "height": {
+      "count": 6990.0,
+      "mean": 546.48,
+      "std": 250.06,
+      "min": 123.0,
+      "25%": 391.25,
+      "50%": 500.0,
+      "75%": 648.0,
+      "max": 5553.0
+    },
+    "aspect_ratio": {
+      "count": 6990.0,
+      "mean": 1.14,
+      "std": 0.36,
+      "min": 0.33,
+      "25%": 0.88,
+      "50%": 1.01,
+      "75%": 1.35,
+      "max": 4.35
+    }
+  },
+  "corrupted_count": 1,
+  "corrupted_files": [
+    "image_5119.png"
+  ],
+  "duplicate_image_group_count": 67,
+  "duplicate_image_redundant_count": 109,
+  "duplicate_image_groups": {
+    "0000000000ffffff": [
+      "image_132.png",
+      "image_149.png",
+      "image_3115.png",
+      "image_3620.png",
+      "image_4417.png",
+      "image_4534.png",
+      "image_4618.png",
+      "image_5516.png",
+      "image_5838.png",
+      "image_725.png"
+    ],
+    "00000000ffffffff": [
+      "image_1260.png",
+      "image_2839.png",
+      "image_2961.png",
+      "image_328.jpg",
+      "image_4646.jpg",
+      "image_4671.png",
+      "image_6545.png",
+      "image_6566.png"
+    ],
+    "07ff07fe90f0f09a": [
+      "image_379.jpg",
+      "image_6144.jpg"
+    ],
+    "0c0c0800000cffff": [
+      "image_3341.png",
+      "image_4247.png"
+    ],
+    "0f0f0f0f0f0f0f0f": [
+      "image_2441.jpg",
+      "image_2771.jpg"
+    ],
+    "0f0f0f0f0f0f0fff": [
+      "image_1390.png",
+      "image_1623.png"
+    ],
+    "19993890900f0f0f": [
+      "image_4300.jpg",
+      "image_934.jpg"
+    ],
+    "19999d0d3d3010ff": [
+      "image_3360.png",
+      "image_4557.png"
+    ],
+    "1c181eff730000ff": [
+      "image_4338.png",
+      "image_84.png"
+    ],
+    "1f1f04840c0404c1": [
+      "image_4318.jpg",
+      "image_6061.jpg"
+    ],
+    "2c341cb6b277e7c5": [
+      "image_1205.jpg",
+      "image_2715.jpg"
+    ],
+    "3c7e43437dff000e": [
+      "image_1215.jpg",
+      "image_5986.jpg"
+    ],
+    "3e7f1f3c0c0f7f3e": [
+      "image_395.png",
+      "image_6134.jpg"
+    ],
+    "6f2b0d6d0e271301": [
+      "image_4759.jpg",
+      "image_916.jpg"
+    ],
+    "78e1f90cd3b03dd9": [
+      "image_1607.jpg",
+      "image_90.jpg"
+    ],
+    "7c38bf3333bfa181": [
+      "image_1957.jpg",
+      "image_5992.jpg"
+    ],
+    "7f0100199cb1fa7e": [
+      "image_2818.jpg",
+      "image_4487.jpg",
+      "image_4658.jpg"
+    ],
+    "7f17131b01087e7f": [
+      "image_1248.jpg",
+      "image_3371.jpeg"
+    ],
+    "7f191a18d8bc9e7e": [
+      "image_2673.jpg",
+      "image_6294.jpeg"
+    ],
+    "9f7fffffe8200001": [
+      "image_2415.jpg",
+      "image_3350.jpg"
+    ],
+    "b7ffffdb830b8393": [
+      "image_2018.png",
+      "image_3314.png"
+    ],
+    "c3c3c3c3c3c3c3c3": [
+      "image_1430.jpg",
+      "image_2910.jpg",
+      "image_5512.jpg"
+    ],
+    "c3d37fd98f0f0f03": [
+      "image_101.jpg",
+      "image_6366.jpg"
+    ],
+    "d3f1f9f8f0f0e0e0": [
+      "image_4078.jpg",
+      "image_5042.jpg"
+    ],
+    "df1c0c1c1818ffff": [
+      "image_1963.jpg",
+      "image_1964.jpg"
+    ],
+    "f3e9edcd89090179": [
+      "image_2732.jpg",
+      "image_3649.png"
+    ],
+    "f6b2f0d6e0667120": [
+      "image_6903.jpg",
+      "image_915.jpg"
+    ],
+    "fb8307070704cfc7": [
+      "image_1612.jpg",
+      "image_4894.jpg"
+    ],
+    "fc391c14000c587e": [
+      "image_4072.jpg",
+      "image_6726.jpg"
+    ],
+    "fcc8c0c0c080cfff": [
+      "image_1605.jpg",
+      "image_88.jpg"
+    ],
+    "fd1c303b70d89830": [
+      "image_25.jpg",
+      "image_6234.jpg"
+    ],
+    "ff0000000000ffff": [
+      "image_3139.png",
+      "image_3516.jpg",
+      "image_5817.png",
+      "image_6540.png"
+    ],
+    "ff000000ffffffff": [
+      "image_1356.png",
+      "image_1550.png",
+      "image_6080.png"
+    ],
+    "ff0010307c7c7e7e": [
+      "image_5350.jpg",
+      "image_6941.jpg"
+    ],
+    "ff001c1c0880feff": [
+      "image_2189.png",
+      "image_5062.png"
+    ],
+    "ff08083c1c187fff": [
+      "image_1194.jpg",
+      "image_2670.jpg",
+      "image_6875.jpg"
+    ],
+    "ff1828001a181aff": [
+      "image_106.jpg",
+      "image_5144.jpg"
+    ],
+    "ff2d08080080c0f0": [
+      "image_1237.png",
+      "image_3643.png"
+    ],
+    "ff3f0f0f0f3134f5": [
+      "image_423.jpg",
+      "image_6141.jpg"
+    ],
+    "ff60303f1f183c3c": [
+      "image_1625.jpg",
+      "image_6948.jpg"
+    ],
+    "ff8181818181ffff": [
+      "image_273.jpg",
+      "image_274.jpg",
+      "image_6046.png"
+    ],
+    "ff901830303038ff": [
+      "image_4146.jpg",
+      "image_6418.jpg"
+    ],
+    "ffc3818181c3ffff": [
+      "image_6015.jpg",
+      "image_6988.jpg"
+    ],
+    "ffc3cb0f0f0d6fff": [
+      "image_6640.jpg",
+      "image_865.jpg"
+    ],
+    "ffde880010107efc": [
+      "image_3640.jpg",
+      "image_4644.jpg",
+      "image_5785.jpg"
+    ],
+    "ffe7e7e787838181": [
+      "image_3623.jpg",
+      "image_6624.jpg"
+    ],
+    "ffe7ffc300007e00": [
+      "image_4960.jpg",
+      "image_6831.jpeg"
+    ],
+    "fff3f1e80008187c": [
+      "image_1497.jpg",
+      "image_4038.jpg"
+    ],
+    "fff7796800000000": [
+      "image_3322.jpg",
+      "image_4252.jpg"
+    ],
+    "fff7ffffc6800010": [
+      "image_2666.jpg",
+      "image_5303.jpg"
+    ],
+    "fffee6c28888c9eb": [
+      "image_1062.jpg",
+      "image_5621.jpg"
+    ],
+    "fffef0f018087e7e": [
+      "image_1624.jpeg",
+      "image_4937.jpeg"
+    ],
+    "ffff0000000000ff": [
+      "image_2137.png",
+      "image_2937.jpeg",
+      "image_3796.png",
+      "image_3915.png"
+    ],
+    "ffff00000000ffff": [
+      "image_1304.jpg",
+      "image_1414.jpg",
+      "image_201.png",
+      "image_2092.png",
+      "image_2131.jpg",
+      "image_2341.png",
+      "image_2544.jpg",
+      "image_4635.jpg",
+      "image_5075.png",
+      "image_5420.png",
+      "image_5657.png",
+      "image_6426.png"
+    ],
+    "ffff000000ffffff": [
+      "image_1115.png",
+      "image_1316.png",
+      "image_4396.png"
+    ],
+    "ffff000020240060": [
+      "image_1206.jpg",
+      "image_2689.jpg"
+    ],
+    "ffff818181818181": [
+      "image_4884.jpg",
+      "image_5806.jpg"
+    ],
+    "ffff8181818181ff": [
+      "image_1003.png",
+      "image_5370.jpg"
+    ],
+    "ffff81818181ffff": [
+      "image_5084.png",
+      "image_5300.png"
+    ],
+    "ffff818181e7ffff": [
+      "image_6005.jpg",
+      "image_6123.jpg",
+      "image_6987.jpg"
+    ],
+    "ffffe7c3c3c7c3d3": [
+      "image_6092.jpg",
+      "image_96.jpg"
+    ],
+    "ffffff0000000000": [
+      "image_2444.jpg",
+      "image_2476.jpg",
+      "image_3725.jpg",
+      "image_4011.jpg",
+      "image_6584.jpg"
+    ],
+    "ffffff000000ffff": [
+      "image_3584.png",
+      "image_6524.png",
+      "image_980.png"
+    ],
+    "ffffff00000c0c00": [
+      "image_2445.jpg",
+      "image_3104.jpg"
+    ],
+    "ffffff0800100000": [
+      "image_5192.jpg",
+      "image_6631.jpg"
+    ],
+    "ffffffff00000000": [
+      "image_1352.jpg",
+      "image_6190.jpg",
+      "image_6311.png"
+    ],
+    "ffffffff000000ff": [
+      "image_2375.png",
+      "image_2520.jpg",
+      "image_4911.png"
+    ]
+  },
+  "duplicate_label_row_count": 0,
+  "missing_images": [
+    "image_960.jpe"
+  ],
+  "missing_images_count": 1,
+  "missing_labels": [],
+  "missing_labels_count": 0,
+  "invalid_extension_files": [
+    "image_960.jpe"
+  ],
+  "invalid_extension_count": 1,
+  "imbalance": {
+    "ratio": 20.70198675496689,
+    "is_imbalanced": true,
+    "largest_label": "positive",
+    "smallest_label": "very_negative",
+    "threshold": 3.0
+  },
+  "charts": {
+    "class_distribution": "output\\class_distribution.png",
+    "dimension_distribution": "output\\dimension_distribution.png",
+    "sample_images": "output\\sample_images.png"
+  },
+  "recommendations": [
+    "1 corrupted image(s) found \u2014 remove or re-export them before training; a corrupted file will crash a naive data loader.",
+    "67 duplicate image group(s) found (109 redundant files) \u2014 de-duplicate before splitting into train/validation/test to avoid leakage across splits.",
+    "1 filename(s) in the CSV have no matching image file \u2014 these rows can't be used and should be removed from the label set.",
+    "1 file(s) in the dataset folder have unsupported extensions and were skipped entirely \u2014 confirm they aren't images in disguise.",
+    "Class imbalance detected (20.7x between 'positive' and 'very_negative') \u2014 consider class weighting, oversampling the minority class, or augmentation."
+  ]
+}

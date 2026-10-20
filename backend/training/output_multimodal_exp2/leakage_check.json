@@ -1,0 +1,178 @@
+{
+  "passed": true,
+  "filename_overlap_count": 0,
+  "filename_overlaps": [],
+  "image_hash_overlap_count": 0,
+  "image_hash_overlaps": [],
+  "text_overlap_count": 11,
+  "text_overlaps": [
+    {
+      "text": "#name?",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_5835.jpg"
+        },
+        {
+          "split": "train",
+          "filename": "image_5609.png"
+        },
+        {
+          "split": "validation",
+          "filename": "image_2467.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_4996.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_1770.jpg"
+        }
+      ]
+    },
+    {
+      "text": "<html><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"content-type\"><style type=\"text/css\">ol{margin:0;padding:0}table td",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_5486.png"
+        },
+        {
+          "split": "train",
+          "filename": "image_4805.png"
+        },
+        {
+          "split": "train",
+          "filename": "image_5250.jpg"
+        },
+        {
+          "split": "train",
+          "filename": "image_2177.png"
+        },
+        {
+          "split": "validation",
+          "filename": "image_1920.png"
+        }
+      ]
+    },
+    {
+      "text": "bill is on the internet. bill sees something that offends him. bill moves on. bill is smart. be like bill.",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_371.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_379.jpg"
+        }
+      ]
+    },
+    {
+      "text": "don't be racist hate everyone",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_3396.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_3422.png"
+        }
+      ]
+    },
+    {
+      "text": "i couldn't be happier quickmeme.com",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_6060.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_4888.jpg"
+        }
+      ]
+    },
+    {
+      "text": "i don't always launch rockets but when i do they crash after a minute reuters",
+      "entries": [
+        {
+          "split": "validation",
+          "filename": "image_2300.jpg"
+        },
+        {
+          "split": "test",
+          "filename": "image_4430.jpg"
+        }
+      ]
+    },
+    {
+      "text": "mr mime: the barrier pokemon. known to make walls and have silly hair that's my pokemon ifunny.co",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_158.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_291.png"
+        }
+      ]
+    },
+    {
+      "text": "the only two reasons to watch the big bang theory",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_6159.png"
+        },
+        {
+          "split": "validation",
+          "filename": "image_478.jpg"
+        }
+      ]
+    },
+    {
+      "text": "this is madison. madison sees it's raining outside. madison doesn't post it on facebook because she knows her friends also have eyes. madison is smart. be like madison.",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_398.png"
+        },
+        {
+          "split": "validation",
+          "filename": "image_383.jpg"
+        }
+      ]
+    },
+    {
+      "text": "to the window to the wall",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_4087.jpg"
+        },
+        {
+          "split": "validation",
+          "filename": "image_1725.png"
+        }
+      ]
+    },
+    {
+      "text": "when a cat closes its eyes around you it means it trusts you my cat:",
+      "entries": [
+        {
+          "split": "train",
+          "filename": "image_4444.jpg"
+        },
+        {
+          "split": "test",
+          "filename": "image_309.jpg"
+        }
+      ]
+    }
+  ],
+  "text_overlap_note": "Identical text across splits is reported for visibility only \u2014 it is NOT treated as a leakage failure, since meme templates legitimately reuse the same caption across many different images. Review text_overlaps manually if the count is unexpectedly high."
+}

@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-08-07T09:57:52.760094+00:00",
+  "configuration": {
+    "dataset_root": "C:\\Users\\prave\\OneDrive\\Desktop\\6992 Meme Images Dataset with Labels\\images",
+    "csv_path": "C:\\Users\\prave\\OneDrive\\Desktop\\6992 Meme Images Dataset with Labels\\labels.csv",
+    "image_size": 224,
+    "batch_size": 32,
+    "pad_color": [
+      0,
+      0,
+      0
+    ],
+    "normalize_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "normalize_std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "train_ratio": 0.7,
+    "val_ratio": 0.15,
+    "test_ratio": 0.15,
+    "random_seed": 42
+  },
+  "original_csv_record_count": 6992,
+  "scanned_image_count": 6991,
+  "matched_image_count": 6991,
+  "missing_image_count": 1,
+  "missing_label_count": 0,
+  "corrupted_count": 1,
+  "duplicate_group_count": 67,
+  "duplicate_redundant_count": 109,
+  "final_usable_count": 6881,
+  "class_distribution": {
+    "positive": 3068,
+    "neutral": 2173,
+    "very_positive": 1018,
+    "negative": 473,
+    "very_negative": 149
+  },
+  "num_classes": 5,
+  "classes": [
+    "negative",
+    "neutral",
+    "positive",
+    "very_negative",
+    "very_positive"
+  ],
+  "train_count": 4817,
+  "validation_count": 1032,
+  "test_count": 1032,
+  "split_class_distribution": {
+    "train": {
+      "positive": 2148,
+      "neutral": 1521,
+      "very_positive": 713,
+      "negative": 331,
+      "very_negative": 104
+    },
+    "validation": {
+      "positive": 460,
+      "neutral": 326,
+      "very_positive": 153,
+      "negative": 71,
+      "very_negative": 22
+    },
+    "test": {
+      "positive": 460,
+      "neutral": 326,
+      "very_positive": 152,
+      "negative": 71,
+      "very_negative": 23
+    }
+  },
+  "leakage_check": {
+    "passed": true,
+    "filenames_in_multiple_splits": [],
+    "phash_leak_count": 0
+  },
+  "transform_check": {
+    "passed": true,
+    "checked_count": 5,
+    "failures": [],
+    "sample_proof_path": "backend\\preprocessing\\output\\preprocessing_sample_proof.png"
+  },
+  "recommendations": [
+    "1 corrupted image(s) were excluded \u2014 no action needed, already handled.",
+    "109 redundant duplicate image(s) across 67 group(s) were excluded before splitting \u2014 no action needed.",
+    "1 CSV row(s) referenced an image file that doesn't exist.",
+    "Class imbalance is present (see class_distribution). Not corrected at this stage per design \u2014 address later via class-weighted loss, oversampling, or augmentation during training, not by duplicating images here."
+  ]
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 1.6294521573719851,
+    "val_loss": 1.6146847379300022,
+    "val_accuracy": 0.25193798449612403,
+    "val_f1_macro": 0.18352960047962125,
+    "val_precision_macro": 0.2075392460548832,
+    "val_recall_macro": 0.20346389882065452,
+    "elapsed_seconds": 108.2
+  },
+  {
+    "epoch": 2,
+    "train_loss": 1.5611812521219997,
+    "val_loss": 1.6289555046909538,
+    "val_accuracy": 0.3013565891472868,
+    "val_f1_macro": 0.204285688441185,
+    "val_precision_macro": 0.2087271936021216,
+    "val_recall_macro": 0.21178512435007674,
+    "elapsed_seconds": 145.4
+  },
+  {
+    "epoch": 3,
+    "train_loss": 1.4928718577140045,
+    "val_loss": 1.6371063594670259,
+    "val_accuracy": 0.20930232558139536,
+    "val_f1_macro": 0.16908334610517378,
+    "val_precision_macro": 0.21044299677057365,
+    "val_recall_macro": 0.21290571337770672,
+    "elapsed_seconds": 113.8
+  },
+  {
+    "epoch": 4,
+    "train_loss": 1.3925040084246112,
+    "val_loss": 1.6728259851766187,
+    "val_accuracy": 0.22093023255813954,
+    "val_f1_macro": 0.171681702575533,
+    "val_precision_macro": 0.19721851065271764,
+    "val_recall_macro": 0.19113399536264689,
+    "elapsed_seconds": 116.1
+  },
+  {
+    "epoch": 5,
+    "train_loss": 1.267373506374965,
+    "val_loss": 1.7407557280488717,
+    "val_accuracy": 0.2374031007751938,
+    "val_f1_macro": 0.1730077015906832,
+    "val_precision_macro": 0.19529756146226684,
+    "val_recall_macro": 0.18800703897323529,
+    "elapsed_seconds": 107.6
+  },
+  {
+    "epoch": 6,
+    "train_loss": 1.1241550455455689,
+    "val_loss": 1.819931340772052,
+    "val_accuracy": 0.23546511627906977,
+    "val_f1_macro": 0.1844231569890352,
+    "val_precision_macro": 0.21008829454362948,
+    "val_recall_macro": 0.21984738710792584,
+    "elapsed_seconds": 112.7
+  },
+  {
+    "epoch": 7,
+    "train_loss": 0.9958990415349798,
+    "val_loss": 1.9068923994552258,
+    "val_accuracy": 0.24321705426356588,
+    "val_f1_macro": 0.17773484580097793,
+    "val_precision_macro": 0.19661287242169595,
+    "val_recall_macro": 0.2001507050358807,
+    "elapsed_seconds": 107.6
+  }
+]
