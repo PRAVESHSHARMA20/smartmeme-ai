@@ -1,135 +1,139 @@
+
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { AuthLayout } from "@/components/auth/auth-layout";
-import { PasswordInput } from "@/components/auth/password-input";
-import { FormMessage } from "@/components/auth/form-message";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { validateEmail } from "@/lib/validation";
-
-type Status = "idle" | "submitting" | "error" | "success";
-
-/**
- * No backend exists yet (prototype phase), so submission is simulated.
- * For demoing the error state during review: email "blocked@demo.com"
- * with any password will deliberately fail. Anything else succeeds.
- */
-const DEMO_BLOCKED_EMAIL = "blocked@demo.com";
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [errors, setErrors] = React.useState<{ email?: string; password?: string }>({});
-  const [status, setStatus] = React.useState<Status>("idle");
-  const emailRef = React.useRef<HTMLInputElement>(null);
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleBlur(field: "email" | "password") {
-    if (field === "email") {
-      setErrors((prev) => ({ ...prev, email: validateEmail(email) }));
-    } else {
-      setErrors((prev) => ({ ...prev, password: password ? undefined : "Password is required." }));
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
-    const emailError = validateEmail(email);
-    const passwordError = password ? undefined : "Password is required.";
-    setErrors({ email: emailError, password: passwordError });
+    try {
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
 
-    if (emailError || passwordError) {
-      emailRef.current?.focus();
-      return;
+        if (error) throw error;
+
+        setMessage(
+          data.session
+            ? "Account created successfully! You are logged in."
+            : "Account created! Check your email to confirm your account."
+        );
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        window.location.href = "/feed";
+      }
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setStatus("submitting");
-
-    await new Promise((resolve) => setTimeout(resolve, 900));
-
-    if (email.toLowerCase() === DEMO_BLOCKED_EMAIL) {
-      setStatus("error");
-      return;
-    }
-
-    setStatus("success");
-    setTimeout(() => router.push("/feed"), 700);
   }
-
-  const submitting = status === "submitting" || status === "success";
 
   return (
-    <AuthLayout>
-      <h1 className="sr-only">Log in to SmartMeme AI</h1>
-      <Card elevation={1} className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Log in to see what your feed's been up to.</CardDescription>
-        </CardHeader>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-white">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md space-y-5 rounded-2xl border border-slate-700 bg-slate-900 p-8 shadow-xl"
+      >
+        <h1 className="text-center text-3xl font-bold">
+          SmartMeme AI
+        </h1>
 
-        <CardContent>
-          <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <Input
-              ref={emailRef}
-              label="Email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              className="h-11"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => handleBlur("email")}
-              error={errors.email}
-              disabled={submitting}
-            />
+        <p className="text-center text-slate-400">
+          {mode === "login"
+            ? "Welcome back! Log in to continue."
+            : "Create your SmartMeme AI account."}
+        </p>
 
-            <PasswordInput
-              label="Password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              className="h-11"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onBlur={() => handleBlur("password")}
-              error={errors.password}
-              disabled={submitting}
-            />
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm">
+            Email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 outline-none focus:border-blue-500"
+            placeholder="you@example.com"
+          />
+        </div>
 
-            {status === "error" && (
-              <FormMessage variant="error">
-                We couldn&apos;t find an account with that email and password.
-              </FormMessage>
-            )}
-            {status === "success" && (
-              <FormMessage variant="success">Welcome back — taking you to your feed…</FormMessage>
-            )}
+        <div className="space-y-2">
+          <label htmlFor="password" className="block text-sm">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            minLength={6}
+            autoComplete={
+              mode === "login" ? "current-password" : "new-password"
+            }
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 p-3 outline-none focus:border-blue-500"
+            placeholder="At least 6 characters"
+          />
+        </div>
 
-            <Button type="submit" size="lg" disabled={submitting} className="mt-1">
-              {status === "submitting" ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-                  Logging in…
-                </>
-              ) : (
-                "Log in"
-              )}
-            </Button>
-          </form>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-lg bg-blue-600 p-3 font-semibold hover:bg-blue-500 disabled:opacity-50"
+        >
+          {loading
+            ? "Please wait..."
+            : mode === "login"
+              ? "Log In"
+              : "Create Account"}
+        </button>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-medium text-accent hover:underline">
-              Sign up
-            </Link>
+        {message && (
+          <p role="status" className="break-words text-sm text-blue-300">
+            {message}
           </p>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+        )}
+
+        <p className="text-center text-sm text-slate-400">
+          {mode === "login"
+            ? "Don't have an account?"
+            : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setMode(mode === "login" ? "signup" : "login");
+              setMessage("");
+            }}
+            className="font-semibold text-blue-400 hover:text-blue-300"
+          >
+            {mode === "login" ? "Sign up" : "Log in"}
+          </button>
+        </p>
+      </form>
+    </main>
   );
 }

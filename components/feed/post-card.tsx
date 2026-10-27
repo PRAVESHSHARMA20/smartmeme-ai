@@ -8,18 +8,14 @@ import {
   Send,
   Bookmark,
   ShieldCheck,
-  Check,
   Bug,
   Cat,
   BookOpen,
   Trophy,
   Sparkles,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { transitions } from "@/lib/motion";
 import type { MockPost, PostTheme } from "@/lib/mock-data";
+import { supabase } from "@/lib/supabase";
 
 const THEME_ICON: Record<PostTheme, typeof Bug> = {
   programming: Bug,
@@ -29,276 +25,554 @@ const THEME_ICON: Record<PostTheme, typeof Bug> = {
   anime: Sparkles,
 };
 
-// Cycles through existing design tokens only — variety without introducing
-// new colors outside the established palette (same approach as Avatar).
-const THEME_COLOR = ["text-accent", "text-safe", "text-muted-foreground", "text-blocked"];
-
-function hashString(value: string) {
-  let hash = 0;
-  for (let i = 0; i < value.length; i++) hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
-  return hash;
+interface PostComment {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  username: string;
 }
 
-export function PostCard({ post, isNew = false }: { post: MockPost; isNew?: boolean }) {
+export function PostCard({
+  post,
+  isNew = false,
+}: {
+  post: MockPost;
+  isNew?: boolean;
+}) {
+  const [currentUserId, setCurrentUserId] = React.useState<string | null>(null);
   const [liked, setLiked] = React.useState(false);
-  const [likeCount, setLikeCount] = React.useState(post.likeCount);
+  const [likeCount, setLikeCount] = React.useState(post.likeCount ?? 0);
   const [saved, setSaved] = React.useState(false);
-  const [burstId, setBurstId] = React.useState(0);
-  const [showAllComments, setShowAllComments] = React.useState(false);
-  const [comments, setComments] = React.useState(post.comments);
-  const [commentCount, setCommentCount] = React.useState(post.commentCount);
-  const [draft, setDraft] = React.useState("");
-  const [shareCopied, setShareCopied] = React.useState(false);
-  const [mediaLoaded, setMediaLoaded] = React.useState(false);
-  // isNew starts true only for a freshly published post (passed in by the
-  // feed); once mounted, the badge clears itself after a few seconds so it
-  // never becomes stale on a post that's just... a post.
+  const [comments, setComments] = React.useState<PostComment[]>([]);
+  const [commentCount, setCommentCount] = React.useState(
+    post.commentCount ?? 0
+  );
+  const [commentDraft, setCommentDraft] = React.useState("");
+  const [showComments, setShowComments] = React.useState(false);
+  const [shareMessage, setShareMessage] = React.useState("");
   const [showNewBadge, setShowNewBadge] = React.useState(isNew);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageFailed, setImageFailed] = React.useState(false);
+  const [loadingInteractions, setLoadingInteractions] = React.useState(true);
+  const [likeBusy, setLikeBusy] = React.useState(false);
+  const [saveBusy, setSaveBusy] = React.useState(false);
+  const [commentBusy, setCommentBusy] = React.useState(false);
+  const [error, setError] = React.useState("");
+
   const commentInputRef = React.useRef<HTMLInputElement>(null);
+
+  const ThemeIcon = THEME_ICON[post.theme] ?? Sparkles;
 
   React.useEffect(() => {
     if (!isNew) return;
-    const timeout = setTimeout(() => setShowNewBadge(false), 4000);
-    return () => clearTimeout(timeout);
+
+    setShowNewBadge(true);
+
+    const timer = window.setTimeout(() => {
+      setShowNewBadge(false);
+    }, 4000);
+
+    return () => window.clearTimeout(timer);
   }, [isNew]);
 
-  // Themed mock posts fake a load delay for a "content is arriving" feel;
-  // real published images drive mediaLoaded from their own onLoad event.
+  const loadInteractions = React.useCallback(async () => {
+    setLoadingInteractions(true);
+    setError("");
+
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError) throw authError;
+
+      setCurrentUserId(user?.id ?? null);
+
+      const [
+        { data: allLikes, error: likesError },
+        { data: myLike, error: myLikeError },
+        { data: allComments, error: commentsError },
+        { data: mySavedPost, error: savedError },
+      ] = await Promise.all([
+        supabase
+          .from("likes")
+          .select("user_id")
+          .eq("post_id", post.id),
+
+        user
+          ? supabase
+              .from("likes")
+              .select("user_id")
+              .eq("post_id", post.id)
+              .eq("user_id", user.id)
+              .maybeSingle()
+          : Promise.resolve({ data: null, error: null }),
+
+        supabase
+          .from("comments")
+          .select("id, user_id, content, created_at")
+          .eq("post_id", post.id)
+          .order("created_at", { ascending: true }),
+
+        user
+          ? supabase
+              .from("saved_posts")
+              .select("post_id")
+              .eq("post_id", post.id)
+              .eq("user_id", user.id)
+              .maybeSingle()
+          : Promise.resolve({ data: null, error: null }),
+      ]);
+
+      if (likesError) throw likesError;
+      if (myLikeError) throw myLikeError;
+      if (commentsError) throw commentsError;
+      if (savedError) throw savedError;
+
+      setLikeCount(allLikes?.length ?? 0);
+      setLiked(!!myLike);
+      setSaved(!!mySavedPost);
+
+      const commentRows = allComments ?? [];
+      const authorIds = [
+        ...new Set(commentRows.map((comment) => comment.user_id)),
+      ];
+
+      let profileMap = new Map<string, string>();
+
+      if (authorIds.length > 0) {
+        const { data: profiles, error: profileError } = await supabase
+          .from("profiles")
+          .select("id, username, display_name")
+          .in("id", authorIds);
+
+        if (profileError) throw profileError;
+
+        profileMap = new Map(
+          (profiles ?? []).map((profile) => [
+            profile.id,
+            profile.display_name?.trim() ||
+              profile.username ||
+              "SmartMeme User",
+          ])
+        );
+      }
+
+      setComments(
+        commentRows.map((comment) => ({
+          ...comment,
+          username: profileMap.get(comment.user_id) ?? "SmartMeme User",
+        }))
+      );
+      setCommentCount(commentRows.length);
+    } catch (err) {
+      console.error("Could not load post interactions:", err);
+      setError("Couldn't load likes or comments. Please refresh.");
+    } finally {
+      setLoadingInteractions(false);
+    }
+  }, [post.id]);
+
   React.useEffect(() => {
-    if (post.imageUrl) return;
-    const delay = 350 + (hashString(post.id) % 400);
-    const timeout = setTimeout(() => setMediaLoaded(true), delay);
-    return () => clearTimeout(timeout);
-  }, [post.id, post.imageUrl]);
+    void loadInteractions();
+  }, [loadInteractions]);
 
-  function toggleLike() {
-    setLiked((prev) => {
-      setLikeCount((count) => count + (prev ? -1 : 1));
-      return !prev;
-    });
+  async function toggleLike() {
+    if (!currentUserId) {
+      setError("Please sign in to like posts.");
+      return;
+    }
+
+    if (likeBusy) return;
+
+    setLikeBusy(true);
+    setError("");
+
+    try {
+      if (liked) {
+        const { error: deleteError } = await supabase
+          .from("likes")
+          .delete()
+          .eq("post_id", post.id)
+          .eq("user_id", currentUserId);
+
+        if (deleteError) throw deleteError;
+
+        setLiked(false);
+        setLikeCount((count) => Math.max(0, count - 1));
+      } else {
+        const { error: insertError } = await supabase
+          .from("likes")
+          .insert({
+            post_id: post.id,
+            user_id: currentUserId,
+          });
+
+        if (insertError) throw insertError;
+
+        setLiked(true);
+        setLikeCount((count) => count + 1);
+      }
+    } catch (err) {
+      console.error("Could not update like:", err);
+      setError("Couldn't update like. Please try again.");
+    } finally {
+      setLikeBusy(false);
+    }
   }
 
-  function handleDoubleClickMedia() {
-    if (!liked) toggleLike();
-    setBurstId((id) => id + 1);
+  function handleDoubleClick() {
+    if (!liked && !likeBusy) {
+      void toggleLike();
+    }
   }
 
-  function handleShare() {
-    setShareCopied(true);
-    setTimeout(() => setShareCopied(false), 1600);
+  async function handleAddComment(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    const text = commentDraft.trim();
+    if (!text || commentBusy) return;
+
+    if (!currentUserId) {
+      setError("Please sign in to comment.");
+      return;
+    }
+
+    setCommentBusy(true);
+    setError("");
+
+    try {
+      const { data: insertedComment, error: insertError } = await supabase
+        .from("comments")
+        .insert({
+          user_id: currentUserId,
+          post_id: post.id,
+          content: text,
+        })
+        .select("id, user_id, content, created_at")
+        .single();
+
+      if (insertError) throw insertError;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username, display_name")
+        .eq("id", currentUserId)
+        .maybeSingle();
+
+      const username =
+        profile?.display_name?.trim() ||
+        profile?.username ||
+        "SmartMeme User";
+
+      setComments((previous) => [
+        ...previous,
+        { ...insertedComment, username },
+      ]);
+      setCommentCount((count) => count + 1);
+      setCommentDraft("");
+      setShowComments(true);
+    } catch (err) {
+      console.error("Could not add comment:", err);
+      setError("Couldn't post your comment. Please try again.");
+    } finally {
+      setCommentBusy(false);
+    }
   }
 
-  function handleAddComment(e: React.FormEvent) {
-    e.preventDefault();
-    const text = draft.trim();
-    if (!text) return;
-    setComments((prev) => [...prev, { id: `local-${Date.now()}`, user: "you", text }]);
-    setCommentCount((count) => count + 1);
-    setDraft("");
+  async function toggleSaved() {
+    if (!currentUserId) {
+      setError("Please sign in to save posts.");
+      return;
+    }
+
+    if (saveBusy) return;
+
+    setSaveBusy(true);
+    setError("");
+
+    try {
+      if (saved) {
+        const { error: deleteError } = await supabase
+          .from("saved_posts")
+          .delete()
+          .eq("user_id", currentUserId)
+          .eq("post_id", post.id);
+
+        if (deleteError) throw deleteError;
+        setSaved(false);
+      } else {
+        const { error: insertError } = await supabase
+          .from("saved_posts")
+          .insert({
+            user_id: currentUserId,
+            post_id: post.id,
+          });
+
+        if (insertError) throw insertError;
+        setSaved(true);
+      }
+    } catch (err) {
+      console.error("Could not update saved post:", err);
+      setError("Couldn't save this post. Please try again.");
+    } finally {
+      setSaveBusy(false);
+    }
   }
 
-  const visibleComments = showAllComments ? comments : comments.slice(0, 1);
-  const ThemeIcon = THEME_ICON[post.theme ?? "programming"];
-  const themeColor = THEME_COLOR[hashString(post.id) % THEME_COLOR.length];
+  async function handleShare() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareMessage("Link copied!");
+    } catch {
+      setShareMessage("Copy the page link from your browser.");
+    }
+
+    window.setTimeout(() => setShareMessage(""), 2000);
+  }
 
   return (
-    <Card elevation={1} hoverLift className="overflow-hidden" aria-label={`Post by ${post.displayName}`}>
-      <article>
-        {/* Header */}
-        <div className="flex items-center gap-3 p-4">
-          <Avatar name={post.displayName} size="md" />
-          <div className="flex flex-1 flex-col leading-tight">
-            <div className="flex flex-wrap items-center gap-x-1.5 text-sm">
-              <span className="font-medium text-foreground">{post.displayName}</span>
-              <span className="text-muted-foreground">@{post.handle}</span>
-              <span className="text-muted-foreground" aria-hidden="true">
-                ·
-              </span>
-              <span className="text-muted-foreground">{post.timeAgo}</span>
+    <motion.article
+      layout
+      initial={isNew ? { opacity: 0, y: 12 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      className="overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+    >
+      <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/15 font-semibold text-accent">
+            {(post.displayName || "U").charAt(0).toUpperCase()}
+          </div>
+
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate text-sm font-semibold text-foreground">
+                {post.displayName || "SmartMeme User"}
+              </p>
+
               <AnimatePresence>
                 {showNewBadge && (
                   <motion.span
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={transitions.spring}
-                    className="rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium text-accent"
+                    className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent"
                   >
                     New
                   </motion.span>
                 )}
               </AnimatePresence>
             </div>
-            <span className="mt-0.5 flex items-center gap-1 text-xs text-safe">
-              <ShieldCheck size={11} aria-hidden="true" />
-              Protected by SmartMeme AI
-            </span>
+
+            <p className="truncate text-xs text-muted-foreground">
+              @{(post.handle || "user").replace(/^@/, "")} · {post.timeAgo}
+            </p>
           </div>
         </div>
 
-        {/* Media */}
         <div
-          onDoubleClick={handleDoubleClickMedia}
-          className="relative aspect-square w-full select-none overflow-hidden bg-surface-2"
+          title="SmartMeme AI"
+          className="flex shrink-0 items-center gap-1 text-xs text-safe"
         >
-          <div
-            aria-hidden="true"
-            className={cn(
-              "absolute inset-0 bg-surface-2 transition-opacity duration-500",
-              mediaLoaded ? "animate-none opacity-0" : "animate-pulse opacity-100"
+          <ShieldCheck size={16} />
+          <span className="hidden sm:inline">SmartMeme AI</span>
+        </div>
+      </div>
+
+      <div
+        className="relative flex min-h-48 items-center justify-center overflow-hidden bg-muted"
+        onDoubleClick={handleDoubleClick}
+      >
+        {post.imageUrl && !imageFailed ? (
+          <>
+            {!imageLoaded && (
+              <div className="absolute inset-0 animate-pulse bg-muted" />
             )}
-          />
-          {post.imageUrl ? (
-            <motion.img
+
+            <img
               src={post.imageUrl}
-              alt={`Post by ${post.displayName}`}
-              onLoad={() => setMediaLoaded(true)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: mediaLoaded ? 1 : 0 }}
-              transition={transitions.entrance}
-              className="h-full w-full object-cover"
+              alt={post.caption || "Meme post"}
+              loading="lazy"
+              onLoad={() => setImageLoaded(true)}
+              onError={() => {
+                setImageFailed(true);
+                setImageLoaded(false);
+              }}
+              className={`relative max-h-[600px] w-full object-contain transition-opacity duration-200 ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
             />
-          ) : (
+          </>
+        ) : (
+          <div className="flex min-h-48 w-full flex-col items-center justify-center gap-3 p-8 text-muted-foreground">
+            <ThemeIcon size={48} strokeWidth={1.5} />
+            <p className="text-sm">
+              {imageFailed ? "Image could not be loaded" : "Meme post"}
+            </p>
+          </div>
+        )}
+
+        <AnimatePresence>
+          {liked && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: mediaLoaded ? 1 : 0 }}
-              transition={transitions.entrance}
-              className="flex h-full w-full items-center justify-center"
+              key="liked-heart"
+              initial={{ opacity: 0, scale: 0.4 }}
+              animate={{ opacity: 1, scale: 1.5 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="pointer-events-none absolute"
             >
-              <ThemeIcon size={40} className={themeColor} aria-hidden="true" strokeWidth={1.5} />
+              <Heart
+                size={88}
+                fill="currentColor"
+                className="text-red-500 drop-shadow-lg"
+              />
             </motion.div>
           )}
+        </AnimatePresence>
+      </div>
 
-          <AnimatePresence>
-            {burstId > 0 && (
-              <motion.div
-                key={burstId}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={{ opacity: [0, 1, 1, 0], scale: [0.6, 1.15, 1, 1] }}
-                transition={{ duration: 0.7, times: [0, 0.3, 0.6, 1] }}
-                className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                aria-hidden="true"
-              >
-                <Heart size={72} className="fill-blocked text-blocked drop-shadow-lg" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1 px-2 pt-2">
+      <div className="flex items-center justify-between px-4 pt-3">
+        <div className="flex items-center gap-4">
           <button
             type="button"
-            aria-label={liked ? "Unlike" : "Like"}
+            onClick={() => void toggleLike()}
+            disabled={likeBusy || loadingInteractions}
+            aria-label={liked ? "Unlike post" : "Like post"}
             aria-pressed={liked}
-            onClick={toggleLike}
-            className="flex h-9 items-center gap-1.5 rounded-md px-2 text-foreground hover:bg-surface-2"
+            className={`flex items-center gap-1.5 transition-colors disabled:opacity-60 ${
+              liked
+                ? "text-red-500"
+                : "text-muted-foreground hover:text-red-500"
+            }`}
           >
-            <motion.span whileTap={{ scale: 0.85 }} transition={transitions.spring} className="flex">
-              <Heart
-                size={21}
-                className={liked ? "fill-blocked text-blocked" : "text-foreground"}
-                aria-hidden="true"
-              />
-            </motion.span>
-            <span className="text-sm text-muted-foreground">{likeCount}</span>
+            <Heart size={21} fill={liked ? "currentColor" : "none"} />
+            <span className="text-sm">
+              {loadingInteractions ? "…" : likeCount}
+            </span>
           </button>
 
           <button
             type="button"
-            aria-label="Comment"
-            onClick={() => commentInputRef.current?.focus()}
-            className="flex h-9 items-center gap-1.5 rounded-md px-2 text-foreground hover:bg-surface-2"
+            onClick={() => {
+              setShowComments((previous) => !previous);
+              window.setTimeout(() => commentInputRef.current?.focus(), 0);
+            }}
+            aria-label="Show comments"
+            aria-expanded={showComments}
+            className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
           >
-            <MessageCircle size={20} aria-hidden="true" />
-            <span className="text-sm text-muted-foreground">{commentCount}</span>
+            <MessageCircle size={21} />
+            <span className="text-sm">
+              {loadingInteractions ? "…" : commentCount}
+            </span>
           </button>
-
-          <div className="relative">
-            <button
-              type="button"
-              aria-label="Share"
-              onClick={handleShare}
-              className="flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-surface-2"
-            >
-              <Send size={19} aria-hidden="true" />
-            </button>
-            <AnimatePresence>
-              {shareCopied && (
-                <motion.span
-                  role="status"
-                  initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={transitions.spring}
-                  className="absolute left-1/2 top-10 z-10 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-md border border-border bg-surface-2 px-2 py-1 text-xs text-foreground shadow-lg"
-                >
-                  <Check size={12} className="text-safe" aria-hidden="true" />
-                  Link copied
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </div>
 
           <button
             type="button"
-            aria-label={saved ? "Remove from saved" : "Save"}
-            aria-pressed={saved}
-            onClick={() => setSaved((v) => !v)}
-            className="ml-auto flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-surface-2"
+            onClick={() => void handleShare()}
+            aria-label="Share post"
+            className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            <motion.span whileTap={{ scale: 0.85 }} transition={transitions.spring} className="flex">
-              <Bookmark size={20} className={cn(saved && "fill-foreground")} aria-hidden="true" />
-            </motion.span>
+            <Send size={20} />
           </button>
         </div>
 
-        {/* Caption */}
-        <div className="flex flex-col gap-1 px-4 pt-1">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{post.handle}</span> {post.caption}
+        <button
+          type="button"
+          onClick={() => void toggleSaved()}
+          disabled={saveBusy || loadingInteractions}
+          aria-label={saved ? "Unsave post" : "Save post"}
+          aria-pressed={saved}
+          className={`transition-colors disabled:opacity-60 ${
+            saved
+              ? "text-accent"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Bookmark size={21} fill={saved ? "currentColor" : "none"} />
+        </button>
+      </div>
+
+      {shareMessage && (
+        <p role="status" className="px-4 pt-2 text-xs text-muted-foreground">
+          {shareMessage}
+        </p>
+      )}
+
+      {error && (
+        <p role="alert" className="px-4 pt-2 text-xs text-red-500">
+          {error}
+        </p>
+      )}
+
+      {post.caption && (
+        <div className="px-4 pb-3 pt-3">
+          <p className="whitespace-pre-wrap break-words text-sm text-foreground">
+            <span className="mr-2 font-semibold">
+              @{(post.handle || "user").replace(/^@/, "")}
+            </span>
+            {post.caption}
           </p>
         </div>
+      )}
 
-        {/* Comments */}
-        <div className="flex flex-col gap-1.5 px-4 pt-2">
-          {commentCount > visibleComments.length && !showAllComments && (
-            <button
-              type="button"
-              onClick={() => setShowAllComments(true)}
-              className="text-left text-sm text-muted-foreground hover:text-foreground"
+      <AnimatePresence initial={false}>
+        {showComments && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-3 px-4 pb-3">
+              {comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment.id} className="text-sm">
+                    <span className="mr-2 font-semibold text-foreground">
+                      {comment.username}
+                    </span>
+                    <span className="break-words text-muted-foreground">
+                      {comment.content}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No comments yet. Start the conversation!
+                </p>
+              )}
+            </div>
+
+            <form
+              onSubmit={handleAddComment}
+              className="flex items-center gap-2 border-t border-border px-4 py-3"
             >
-              View all {commentCount} comments
-            </button>
-          )}
-          {visibleComments.map((c) => (
-            <p key={c.id} className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{c.user}</span> {c.text}
-            </p>
-          ))}
-        </div>
+              <input
+                ref={commentInputRef}
+                value={commentDraft}
+                onChange={(event) => setCommentDraft(event.target.value)}
+                placeholder="Add a comment..."
+                aria-label="Write a comment"
+                maxLength={500}
+                className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              />
 
-        {/* Add comment */}
-        <form onSubmit={handleAddComment} className="mt-3 flex items-center gap-2 border-t border-border p-3">
-          <label htmlFor={`comment-${post.id}`} className="sr-only">
-            Add a comment
-          </label>
-          <input
-            id={`comment-${post.id}`}
-            ref={commentInputRef}
-            type="text"
-            placeholder="Add a comment…"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            className="h-9 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
-          />
-          {draft.trim() && (
-            <button type="submit" className="text-sm font-medium text-accent hover:opacity-80">
-              Post
-            </button>
-          )}
-        </form>
-      </article>
-    </Card>
+              <button
+                type="submit"
+                disabled={!commentDraft.trim() || commentBusy}
+                className="text-sm font-semibold text-accent disabled:opacity-40"
+              >
+                {commentBusy ? "Posting..." : "Post"}
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.article>
   );
 }

@@ -36,3 +36,9 @@ backend/preprocessing/output/backup_before_path_fix/
 # Generated model checkpoints
 backend/training/checkpoints/
 backend/training/checkpoints_smoke_test/
+.venv312/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/

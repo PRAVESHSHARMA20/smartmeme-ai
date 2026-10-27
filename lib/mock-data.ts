@@ -1,3 +1,4 @@
+
 export type PostTheme = "programming" | "cat" | "student" | "football" | "anime";
 
 export interface MockComment {
@@ -12,9 +13,7 @@ export interface MockPost {
   handle: string;
   timeAgo: string;
   caption: string;
-  /** Used for the 5 static demo posts, which render an original themed icon instead of a real photo. */
   theme?: PostTheme;
-  /** Used for real user-published posts (from Create Post) — a real image takes priority over theme. */
   imageUrl?: string;
   likeCount: number;
   commentCount: number;
@@ -29,6 +28,8 @@ export const MOCK_POSTS: MockPost[] = [
     timeAgo: "2h",
     caption: "When the bug disappears as soon as your professor arrives 😂",
     theme: "programming",
+    imageUrl:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80",
     likeCount: 342,
     commentCount: 28,
     comments: [
@@ -41,19 +42,25 @@ export const MOCK_POSTS: MockPost[] = [
     displayName: "Sofia Rossi",
     handle: "sofia.rossi",
     timeAgo: "3h",
-    caption: "My debugging partner.",
+    caption: "My debugging partner. 🐱",
     theme: "cat",
+    imageUrl:
+      "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=900&q=80",
     likeCount: 518,
     commentCount: 41,
-    comments: [{ id: "c3", user: "diego.a", text: "10x more effective than Stack Overflow" }],
+    comments: [
+      { id: "c3", user: "diego.a", text: "10x more effective than Stack Overflow" },
+    ],
   },
   {
     id: "post-3",
     displayName: "Zainab Ali",
     handle: "zainab.study",
     timeAgo: "5h",
-    caption: "Studying one night before finals.",
+    caption: "Studying one night before finals. ☕📚",
     theme: "student",
+    imageUrl:
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=80",
     likeCount: 276,
     commentCount: 19,
     comments: [
@@ -66,11 +73,15 @@ export const MOCK_POSTS: MockPost[] = [
     displayName: "Marco Silva",
     handle: "marco.footy",
     timeAgo: "7h",
-    caption: "Weekend football with friends.",
+    caption: "Weekend football with friends. ⚽",
     theme: "football",
+    imageUrl:
+      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=900&q=80",
     likeCount: 189,
     commentCount: 12,
-    comments: [{ id: "c6", user: "noah.w", text: "count me in next weekend" }],
+    comments: [
+      { id: "c6", user: "noah.w", text: "count me in next weekend" },
+    ],
   },
   {
     id: "post-5",
@@ -79,6 +90,8 @@ export const MOCK_POSTS: MockPost[] = [
     timeAgo: "9h",
     caption: "The squad after finishing the final project 🎉",
     theme: "anime",
+    imageUrl:
+      "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=900&q=80",
     likeCount: 403,
     commentCount: 35,
     comments: [
