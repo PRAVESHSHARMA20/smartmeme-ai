@@ -62,7 +62,7 @@ export function PostCard({
 
   const commentInputRef = React.useRef<HTMLInputElement>(null);
 
-  const ThemeIcon = THEME_ICON[post.theme] ?? Sparkles;
+  const ThemeIcon = post.theme ? THEME_ICON[post.theme] ?? Sparkles : Sparkles;
 
   React.useEffect(() => {
     if (!isNew) return;
