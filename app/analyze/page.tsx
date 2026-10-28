@@ -42,13 +42,12 @@ export default function AnalyzePage() {
 
     async function analyzeMeme() {
       try {
-        let elapsed = 0;
-
         for (let i = 0; i < STAGE_DURATIONS_MS.length; i++) {
-          elapsed += STAGE_DURATIONS_MS[i];
+          const duration = STAGE_DURATIONS_MS[i];
+          if (duration === undefined) continue;
 
           await new Promise<void>((resolve) => {
-            timeouts.push(setTimeout(resolve, STAGE_DURATIONS_MS[i]));
+            timeouts.push(setTimeout(resolve, duration));
           });
 
           if (cancelled) return;
