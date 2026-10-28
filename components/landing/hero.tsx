@@ -10,12 +10,13 @@ import { fadeUp, staggerContainer, transitions } from "@/lib/motion";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28">
-      {/* Soft ambient glow — restrained, not neon. Fixed position, decorative only. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[780px] -translate-x-1/2 rounded-full bg-accent/20 opacity-30 blur-[120px]"
-      />
+    <section className="relative isolate overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28">
+      {/* Soft pink gradient wash and blurred color shapes, kept behind the content. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-[18%] top-[-170px] h-[540px] w-[760px] rounded-full bg-rose-200/65 blur-[125px]" />
+        <div className="absolute right-[4%] top-[90px] h-[360px] w-[430px] rounded-full bg-pink-100/80 blur-[105px]" />
+        <div className="absolute bottom-[-190px] left-[42%] h-[380px] w-[520px] rounded-full bg-orange-100/70 blur-[120px]" />
+      </div>
 
       <Container className="relative grid gap-14 md:grid-cols-2 md:items-center md:gap-10">
         <motion.div
