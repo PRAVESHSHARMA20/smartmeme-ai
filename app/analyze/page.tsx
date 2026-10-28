@@ -24,6 +24,7 @@ export default function AnalyzePage() {
     draft,
     outcome,
     blockedReason,
+    sentimentResult,
     setOutcome,
     setSentimentResult,
   } = usePostDraft();
@@ -189,6 +190,7 @@ export default function AnalyzePage() {
             caption={draft.caption}
             phase={phase}
             outcome={outcome}
+            sentimentResult={sentimentResult}
           />
 
           <div className="flex flex-col gap-6">
