@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { MotionProvider } from "@/components/motion-provider";
 import { PostDraftProvider } from "@/components/post-draft-context";
+import { GlobalBackButton } from "@/components/layout/global-back-button";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,7 +27,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider>
           <MotionProvider>
-            <PostDraftProvider>{children}</PostDraftProvider>
+            <PostDraftProvider>
+              <GlobalBackButton />
+              {children}
+            </PostDraftProvider>
           </MotionProvider>
         </ThemeProvider>
       </body>
