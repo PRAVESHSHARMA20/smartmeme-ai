@@ -4,45 +4,42 @@
 
 /*
   SmartMeme AI — Design Tokens
-  Dark mode is the default surface; .light overrides below.
-  All colors are HSL channel triplets (no hsl() wrapper) so Tailwind
-  can compose them with opacity modifiers, e.g. bg-background/80.
+  Dark-first crimson theme with layered charcoal surfaces.
+  Colors are HSL channel triplets so Tailwind opacity modifiers work.
 */
 
 @layer base {
   :root {
-    /* Surfaces — layered elevation instead of shadows */
-    --background: 240 6% 4%;      /* #0A0A0B */
-    --surface-1: 240 6% 8%;       /* #131316 */
-    --surface-2: 240 5% 12%;      /* #1C1C1F */
+    /* Surfaces — near-black with subtle charcoal elevation */
+    --background: 240 8% 4%;       /* #09090B */
+    --surface-1: 240 6% 8%;        /* #131316 */
+    --surface-2: 240 5% 12%;       /* #1D1D21 */
 
     /* Text */
     --foreground: 0 0% 98%;
     --muted-foreground: 240 5% 65%;
 
-    /* Borders */
-    --border: 240 6% 16%;
-    --ring: 243 78% 66%;
+    /* Borders and crimson focus */
+    --border: 240 6% 17%;
+    --ring: 355 86% 61%;
 
-    /* Accent — restrained violet, used sparingly */
-    --accent: 243 78% 66%;
+    /* Primary accent — crimson red */
+    --accent: 355 86% 61%;         /* #F04452 */
     --accent-foreground: 0 0% 100%;
 
-    /* Semantic — desaturated, informational rather than alarm-toned */
-    --safe: 152 40% 45%;
+    /* Semantic states stay distinct from the brand accent */
+    --safe: 152 45% 42%;
     --safe-foreground: 0 0% 100%;
-    --blocked: 6 50% 58%;
+    --blocked: 0 62% 54%;
     --blocked-foreground: 0 0% 100%;
 
     /* Shape & rhythm */
     --radius: 12px;
-
-    /* Motion — Emil Kowalski-style expo-out for entrances */
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .light {
-    --background: 0 0% 98%;       /* #FAFAFA */
+    --background: 0 0% 98%;
     --surface-1: 0 0% 100%;
     --surface-2: 240 5% 95%;
 
@@ -50,14 +47,14 @@
     --muted-foreground: 240 4% 40%;
 
     --border: 240 6% 88%;
-    --ring: 243 70% 55%;
+    --ring: 350 78% 48%;
 
-    --accent: 243 70% 55%;
+    --accent: 350 78% 48%;
     --accent-foreground: 0 0% 100%;
 
-    --safe: 152 40% 32%;
+    --safe: 152 45% 32%;
     --safe-foreground: 0 0% 100%;
-    --blocked: 6 55% 45%;
+    --blocked: 0 62% 45%;
     --blocked-foreground: 0 0% 100%;
   }
 
@@ -78,9 +75,14 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
     text-rendering: optimizeLegibility;
+    background-image: radial-gradient(
+      ellipse at 50% -24%,
+      hsl(var(--accent) / 0.075),
+      transparent 58%
+    );
+    background-attachment: fixed;
   }
 
-  /* Visible keyboard focus everywhere — never removed, only restyled */
   :focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
@@ -90,20 +92,32 @@
   h1, h2, h3 {
     @apply tracking-tight;
   }
-}
 
-@layer utilities {
-  /* Utility for the one place we use glass: nav + the analysis panel */
-  .glass {
-    background: hsl(var(--surface-1) / 0.6);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  ::selection {
+    color: hsl(var(--accent-foreground));
+    background: hsl(var(--accent) / 0.75);
   }
 }
 
-/* Global reduced-motion contract: every animation in the app must
-   respect this. Components should also gate JS-driven motion via
-   the useReducedMotion hook in lib/motion.ts — this covers CSS. */
+@layer utilities {
+  /* Subtle glass for navigation and analysis surfaces */
+  .glass {
+    background: hsl(var(--surface-1) / 0.72);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  .text-accent-glow {
+    text-shadow: 0 0 24px hsl(var(--accent) / 0.28);
+  }
+
+  .border-accent-glow {
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.16),
+      0 0 28px hsl(var(--accent) / 0.06);
+  }
+}
+
+/* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
