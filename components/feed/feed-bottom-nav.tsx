@@ -8,6 +8,14 @@ import { cn } from "@/lib/utils";
 export function FeedBottomNav() {
   const pathname = usePathname();
   const homeActive = pathname === "/feed";
+  const exploreActive = pathname === "/explore";
+  const profileActive = pathname === "/profile";
+
+  const navItemClass = (active: boolean) =>
+    cn(
+      "flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
+      active ? "text-accent" : "text-muted-foreground hover:text-foreground"
+    );
 
   return (
     <nav
@@ -19,29 +27,38 @@ export function FeedBottomNav() {
           href="/feed"
           aria-label="Home"
           aria-current={homeActive ? "page" : undefined}
-          className={cn("flex flex-col items-center gap-0.5", homeActive ? "text-accent" : "text-muted-foreground")}
+          className={navItemClass(homeActive)}
         >
           <Home size={22} aria-hidden="true" />
         </Link>
 
-        <span aria-disabled="true" className="flex flex-col items-center gap-0.5 text-muted-foreground/50">
+        <Link
+          href="/explore"
+          aria-label="Explore"
+          aria-current={exploreActive ? "page" : undefined}
+          className={navItemClass(exploreActive)}
+        >
           <Compass size={22} aria-hidden="true" />
-        </span>
+        </Link>
 
         <Link
           href="/create"
           aria-label="Create post"
           className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground",
-            "transition-transform hover:scale-105 active:scale-95"
+            "flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           )}
         >
           <PlusCircle size={22} aria-hidden="true" />
         </Link>
 
-        <span aria-disabled="true" className="flex flex-col items-center gap-0.5 text-muted-foreground/50">
+        <Link
+          href="/profile"
+          aria-label="Profile"
+          aria-current={profileActive ? "page" : undefined}
+          className={navItemClass(profileActive)}
+        >
           <CircleUserRound size={22} aria-hidden="true" />
-        </span>
+        </Link>
       </div>
     </nav>
   );
