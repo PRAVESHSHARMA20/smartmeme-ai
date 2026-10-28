@@ -15,30 +15,38 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, elevation = 1, interactive = false, hoverLift = false, ...props }, ref) => {
+  (
+    {
+      className,
+      elevation = 1,
+      interactive = false,
+      hoverLift = false,
+      ...props
+    },
+    ref
+  ) => {
     const animatesOnHover = interactive || hoverLift;
-    const Comp = animatesOnHover ? motion.div : "div";
-    const motionProps = animatesOnHover
-      ? {
-          whileHover: { y: -2 },
-          transition: transitions.spring,
-        }
-      : {};
-
-    return (
-      <Comp
-        ref={ref}
-        className={cn(
-          "rounded-lg border border-border",
-          elevation === 1 ? "bg-surface-1" : "bg-surface-2",
-          interactive && "cursor-pointer hover:border-border/60",
-          hoverLift && "hover:border-accent/20 transition-colors",
-          className
-        )}
-        {...motionProps}
-        {...(props as React.ComponentProps<typeof motion.div>)}
-      />
+    const cardClassName = cn(
+      "rounded-lg border border-border",
+      elevation === 1 ? "bg-surface-1" : "bg-surface-2",
+      interactive && "cursor-pointer hover:border-border/60",
+      hoverLift && "hover:border-accent/20 transition-colors",
+      className
     );
+
+    if (animatesOnHover) {
+      return (
+        <motion.div
+          ref={ref}
+          className={cardClassName}
+          whileHover={{ y: -2 }}
+          transition={transitions.spring}
+          {...(props as React.ComponentProps<typeof motion.div>)}
+        />
+      );
+    }
+
+    return <div ref={ref} className={cardClassName} {...props} />;
   }
 );
 Card.displayName = "Card";
@@ -59,21 +67,21 @@ CardTitle.displayName = "CardTitle";
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />
+    <p className={cn("text-sm text-muted-foreground", className)} {...props} />
   )
 );
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("px-6 pb-6", className)} {...props} />
+    <div className={cn("px-6 pb-6", className)} {...props} ref={ref} />
   )
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center px-6 pb-6", className)} {...props} />
+    <div className={cn("flex items-center px-6 pb-6", className)} {...props} ref={ref} />
   )
 );
 CardFooter.displayName = "CardFooter";
